@@ -4,8 +4,10 @@ import Gallery from './Gallery/Gallery'
 import PopularClasses from './PopularClasses/PopularClasses'
 import PopularTeacher from './PopularTeacher/PopularTeacher'
 import Follower from './Follower'
+import useAuth from '../../hooks/useAuth'
 
 function Home() {
+  
   return (
     <section>
       <BannerContainer/>

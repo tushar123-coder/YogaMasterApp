@@ -3,6 +3,10 @@ const app=express()
 const jwt = require('jsonwebtoken');
 require('dotenv').config()
 const cors = require('cors');
+
+
+
+
 const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
 const stripe = require('stripe')(process.env.PAYMENT_SECRET);
 
@@ -12,6 +16,8 @@ app.use(cors())
 app.use(express.json())
 const port=process.env.PORT||3000;
 const uri =process.env.MONGODB_URL;
+
+
 
 const verifyJWT = (req, res, next) => {
     const authorization = req.headers.authorization;
@@ -78,14 +84,15 @@ async function run() {
       // create new user
         app.post('/new-user', async (req, res) => {
             const newUser = req.body;
+            
             const result = await userCollection.insertOne(newUser);
             res.send(result);
         })
         app.post('/api/set-token', (req, res) => {
-            const user = req.body;
-            const token = jwt.sign(user, process.env.ACCESS_SECRET, { expiresIn: '24h' })
-            res.send({ token })
-        })
+            const { email, name } = req.body;
+            const token = jwt.sign({ email, name }, process.env.ACCESS_SECRET, { expiresIn: '24h' });
+            res.json({ token });
+        });
 
 
         // GET ALL USERS
@@ -156,7 +163,8 @@ async function run() {
         })
 
         // GET ALL CLASSES
-        app.get('/classes',verifyJWT, async (req, res) => {
+        app.get('/classes', async (req, res) => {
+            // ,verifyJWT add krna hai baad mai
             const query = { status: 'approved' };
             const result = await classesCollection.find(query).toArray();
             res.send(result);
